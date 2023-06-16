@@ -4,26 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebSocket Chat</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>WebSocket Chat</h1>
 
-    <div id="chat-log"></div>
+    <div id="chat-container">
+        <div id="chat-log"></div>
 
-    <div id="user-input">
-        <input type="text" placeholder="Enter Your Message" id="text">
-        <button onclick="sendMessage()">Send</button>
+        <div id="user-input">
+            <input type="text" placeholder="Enter Your Message" id="text">
+            <button onclick="sendMessage()">Send</button>
+        </div>
     </div>
 
-    <div>
-        <h2>Connected Clients:</h2>
-        <ul id="connected-clients"></ul>
-    </div>
+    <div id="sidebar">
+        <div id="connected-clients-container">
+            <h2>Connected Clients:</h2>
+            <ul id="connected-clients"></ul>
+        </div>
 
-    <div>
-        <h2>Chat Rooms:</h2>
-        <input type="number" placeholder="Enter Room Number" id="room-number">
-        <button onclick="joinRoom()">Join Room</button>
+        <div id="room-container">
+            <h2>Chat Rooms:</h2>
+            <input type="number" placeholder="Enter Room Number" id="room-number">
+            <button onclick="joinRoom()">Join Room</button>
+        </div>
     </div>
 
     <script>
