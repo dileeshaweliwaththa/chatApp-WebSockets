@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+</head>
+<body>
+    <h1>WebSocket Chat</h1>
+
+    <div id="chat-log"></div>
+
+    <div id="user-input">
+        <input type="text" placeholder="Enter Your Message" id="text">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <div>
+        <h2>Connected Clients:</h2>
+        <ul id="connected-clients"></ul>
+    </div>
+
+    <div>
+        <h2>Chat Rooms:</h2>
+        <input type="number" placeholder="Enter Room Number" id="room-number">
+        <button onclick="joinRoom()">Join Room</button>
+    </div>
+
+    <script>
+        var name = prompt("What is Your Name?");
+        var roomNumber = null; // Part3: Variable to store the current room number
+        var sock = new WebSocket("ws://localhost:5001");
+        var log = document.getElementById('chat-log');
+        var userInput = document.getElementById('user-input');
+        var connectedClientsList = document.getElementById('connected-clients');
+        var roomNumberInput = document.getElementById('room-number'); // Part3: Added this line
+
+        sock.onopen = function() {
+            sock.send(JSON.stringify({
+                type: "name",
+                data: name
+            }));
+        };
+
+        sock.onmessage = function(event) {
+            console.log(event);
+            var json = JSON.parse(event.data);
+            log.innerHTML += '<p><strong>' + json.name + ':</strong> ' + json.data + '</p>';
+            if (json.connectedClients) {
+                updateConnectedClients(json.connectedClients);
+            }
+        };
+
+        function sendMessage() {
+            var text = document.getElementById('text').value;
+            sock.send(JSON.stringify({
+                type: "message",
+                data: text,
+                roomNumber: roomNumber // Part3: Include the room number in the message
+            }));
+            log.innerHTML += '<p><strong>You:</strong> ' + text + '</p>';
+            document.getElementById('text').value = '';
+        }
+
+        function updateConnectedClients(clients) {
+            connectedClientsList.innerHTML = '';
+            clients.forEach(function (client) {
+                var li = document.createElement('li');
+                li.textContent = client.personName;
+                connectedClientsList.appendChild(li);
+            });
+        }
+
+        function joinRoom() {
+            roomNumber = parseInt(roomNumberInput.value);
+            sock.send(JSON.stringify({
+                type: "joinRoom",
+                roomNumber: roomNumber
+            }));
+            log.innerHTML = ''; // Part3: Clear the chat log when joining a new room
+        }
+        
+    </script>
+</body>
+</html>
